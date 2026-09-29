@@ -20,6 +20,7 @@ Aplicação web que consulta a tabela existente `public.leads`, cadastra contato
 
 ## Tecnologias
 HTML5, CSS3, JavaScript puro (ES Modules), `@supabase/supabase-js`, PostgreSQL e Vercel. Vite é usado somente como servidor de desenvolvimento e ferramenta de build; não é framework de interface. Testes com o executor nativo do Node.js.
+A escolha foi bem simples, algo responsivo e feito para web, perfeito para sistemas pequenos e de demonstração, utilizando HTML, CSS3 e Javascript.
 
 ## Arquitetura
 Navegador → `app.js` (DOM/eventos) → `leads.js` (dados) → cliente Supabase → PostgreSQL.
