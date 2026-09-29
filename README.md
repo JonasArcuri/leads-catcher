@@ -223,4 +223,4 @@ Após cadastrar um lead, os detalhes abrem com a sugestão pronta. Para leads ex
 
 ## Conclusões
 
-Foi um projeto bem interessante, por mais que eu já tenha feito algo parecido, eu usaria uma arquitetura diferente e um Backend mais robusto para larga escala. Utilização de um Front-end mais forte Como React, Tailwind, Material UI ou Shadcn/ui, Talvez Mocks para geração de Dados fictícios em um ambiente de testes.
+Foi um projeto bem interessante, por mais que eu já tenha trabalhado em algo parecido nos meus projetos pessoais, eu usaria uma arquitetura diferente e um Backend mais robusto para larga escala. Utilização de um Front-end mais forte Como React, Tailwind, Material UI ou Shadcn/ui, Talvez Mocks para geração de Dados fictícios em um ambiente de testes.
