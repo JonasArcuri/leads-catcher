@@ -14,6 +14,7 @@ Aplicação web que consulta a tabela existente `public.leads`, cadastra contato
 - Busca instantânea por nome, telefone, imóvel e origem, sem distinção de caixa/acentos; filtro de status combinado.
 - Paginação visual de dez registros e carregamento completo em lotes, respeitando o limite de resposta do banco.
 - Cadastro validado, detalhes consultados no banco e edição de status.
+- Alternância entre Lista e Kanban, com colunas por status, contagem e os mesmos filtros de busca. No Kanban, clique no nome para abrir os detalhes e use “Mover para” para salvar o novo status no Supabase. O card muda de coluna após a confirmação; se houver falha, permanece no status anterior. O quadro mostra todos os leads filtrados, sem paginação, com rolagem horizontal em telas menores. Status legados aparecem em colunas adicionais. Arraste o corpo do card até outra coluna para alterar o status; a coluna de destino fica destacada durante o movimento. Soltar na mesma coluna ou cancelar o arraste não altera o lead. Durante a gravação, novas movimentações ficam bloqueadas. O seletor “Mover para” continua disponível para celular e teclado.
 - Indicadores atualizados após gravação; feedback, erros próximos aos campos, loading, vazio e tentativas de recuperação.
 - Análises por origem/status, qualificação e conversão, sem bibliotecas de gráficos.
 - Navegação por hash, layout responsivo, tabela com rolagem, labels, foco visível e modais nativos com teclado/Escape e retorno de foco.

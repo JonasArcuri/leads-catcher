@@ -7,6 +7,9 @@ import { STATUSES, ORIGINS, originLabel, filterLeads, validateLead, summarize } 
 
 const $ = (selector) => document.querySelector(selector);
 const state = { leads: [], loaded: false, loading: false, error: '', page: 1, saving: false, updating: false, detailId: null };
+state.layout = 'list';
+let movingLeadId = null;
+let draggedLeadId = null;
 const pageSize = 10;
 const messageDrafts = new Map();
 let messageController = null;
@@ -59,6 +62,68 @@ function renderTable() {
   $('#page-number').textContent = state.loaded ? `${state.page} / ${pages}` : '—';
   $('#previous-page').disabled = state.loading || state.page <= 1;
   $('#next-page').disabled = state.loading || state.page >= pages;
+  const kanban = state.layout === 'kanban';
+  $('#leads-table').hidden = kanban;
+  $('#leads-section .pagination').hidden = kanban;
+  $('#kanban-board').hidden = !kanban || !state.loaded || !filtered.length;
+  document.querySelectorAll('[data-layout]').forEach(button => button.setAttribute('aria-pressed', String(button.dataset.layout === state.layout)));
+  if (kanban) {
+    $('#result-count').textContent = state.loaded ? `${numberFormat.format(filtered.length)} leads${state.error ? ' · Dados da última consulta' : ''}` : 'Aguardando dados';
+    renderKanban(filtered);
+  }
+}
+function renderKanban(leads) {
+  clearKanbanDrag();
+  const statuses = [...new Set([...STATUSES, ...leads.map(lead => lead.status_lead)])];
+  $('#kanban-board').innerHTML = statuses.map((status, index) => {
+    const cards = leads.filter(lead => lead.status_lead === status);
+    return `<section class="kanban-column" data-drop-status="${escape(status)}" aria-labelledby="kanban-title-${index}">
+      <h3 id="kanban-title-${index}">${statusBadge(status)} <span class="count">${cards.length}</span></h3>
+      <div class="kanban-cards">${cards.map(lead => `<article class="kanban-card" data-drag-lead="${escape(lead.id)}" draggable="${!state.loading && !state.updating && movingLeadId === null}" title="Arraste para outra coluna ou use Mover para">
+        <button type="button" class="kanban-name" data-detail="${escape(lead.id)}" aria-label="Visualizar ${escape(lead.nome_lead)}">${escape(lead.nome_lead || 'Sem nome')}</button>
+        <span class="badge">${escape(originLabel(lead.ori_lead))}</span>
+        <p class="property-text" title="${escape(lead.imovel_lead)}">${escape(lead.imovel_lead || 'Interesse não informado')}</p>
+        <p class="muted">${dateLabel(lead.criado_em)}</p>
+        <label>Mover para
+          <select data-kanban-status="${escape(lead.id)}" aria-label="Status de ${escape(lead.nome_lead)}" ${state.loading || state.updating || movingLeadId !== null ? 'disabled' : ''}>
+            ${!STATUSES.includes(status) ? '<option value="" disabled selected>Selecione um status</option>' : ''}${options(STATUSES, status)}
+          </select>
+        </label>
+        ${movingLeadId === String(lead.id) ? '<p class="muted" role="status">Salvando...</p>' : ''}
+      </article>`).join('') || '<p class="kanban-empty">Nenhum lead neste status.</p>'}</div>
+    </section>`;
+  }).join('');
+}
+function clearKanbanDrag() {
+  draggedLeadId = null;
+  document.querySelectorAll('.kanban-dragging, .kanban-drop-target').forEach(element => element.classList.remove('kanban-dragging', 'kanban-drop-target'));
+}
+function kanbanDropColumn(event) {
+  const column = event.target.closest('[data-drop-status]');
+  const lead = state.leads.find(lead => String(lead.id) === draggedLeadId);
+  return !state.loading && !state.updating && lead && column && STATUSES.includes(column.dataset.dropStatus) && column.dataset.dropStatus !== lead.status_lead ? column : null;
+}
+async function moveKanbanLead(id, status) {
+  const lead = state.leads.find(lead => String(lead.id) === id);
+  if (!lead || state.updating || movingLeadId !== null || state.loading || !STATUSES.includes(status) || status === lead.status_lead) return;
+  movingLeadId = id;
+  state.updating = true;
+  $('#refresh').disabled = true;
+  renderTable();
+  try {
+    const updated = await updateLeadStatus(id, status);
+    state.leads = state.leads.map(lead => String(lead.id) === id ? updated : lead);
+    toast(`Status atualizado para ${status}.`);
+  } catch (error) {
+    toast('Não foi possível mover o lead. ' + errorMessage(error), true);
+  } finally {
+    movingLeadId = null;
+    state.updating = false;
+    $('#refresh').disabled = !isConfigured;
+    render();
+    const control = [...document.querySelectorAll('[data-kanban-status]')].find(element => element.dataset.kanbanStatus === id);
+    if (state.layout === 'kanban') (control || $('#status-filter')).focus();
+  }
 }
 function chart(target, entries) {
   if (!state.loaded || !state.leads.length) {
@@ -111,7 +176,7 @@ function loadLeads() {
   return pendingLoad;
 }
 async function fetchLeads() {
-  if (state.loading || !isConfigured) return;
+  if (state.loading || movingLeadId !== null || !isConfigured) return;
   state.loading = true;
   state.error = '';
   $('#refresh').disabled = true;
@@ -288,7 +353,7 @@ async function saveStatus(event) {
     renderDetails(updated);
     toast('Status atualizado com sucesso.');
   } catch (error) { $('#status-error').textContent = errorMessage(error); toast('Não foi possível atualizar o status.', true); }
-  finally { state.updating = false; form.querySelectorAll('button,select').forEach((element) => { element.disabled = false; }); button.textContent = 'Salvar status'; }
+  finally { state.updating = false; form.querySelectorAll('button,select').forEach((element) => { element.disabled = false; }); button.textContent = 'Salvar status'; renderTable(); }
 }
 
 $('#status-filter').insertAdjacentHTML('beforeend', options(STATUSES));
@@ -298,6 +363,52 @@ $('#connection-notice').hidden = isConfigured;
 $('#refresh').disabled = !isConfigured;
 $('#lead-form').addEventListener('submit', submitLead);
 $('#refresh').addEventListener('click', loadLeads);
+$('#kanban-board').addEventListener('change', event => {
+  const select = event.target.closest('[data-kanban-status]');
+  if (select) moveKanbanLead(select.dataset.kanbanStatus, select.value);
+});
+$('#kanban-board').addEventListener('dragstart', event => {
+  const card = event.target.closest('[data-drag-lead]');
+  if (!card || event.target.closest('button, select, option, label') || state.loading || state.updating) {
+    event.preventDefault();
+    return;
+  }
+  draggedLeadId = card.dataset.dragLead;
+  event.dataTransfer.effectAllowed = 'move';
+  event.dataTransfer.setData('text/plain', draggedLeadId);
+  card.classList.add('kanban-dragging');
+});
+$('#kanban-board').addEventListener('dragover', event => {
+  const column = kanbanDropColumn(event);
+  document.querySelectorAll('.kanban-drop-target').forEach(element => element.classList.remove('kanban-drop-target'));
+  if (!column) return;
+  event.preventDefault();
+  event.dataTransfer.dropEffect = 'move';
+  column.classList.add('kanban-drop-target');
+  const board = $('#kanban-board');
+  const bounds = board.getBoundingClientRect();
+  if (event.clientX < bounds.left + 48) board.scrollLeft -= 24;
+  else if (event.clientX > bounds.right - 48) board.scrollLeft += 24;
+});
+$('#kanban-board').addEventListener('dragleave', event => {
+  const column = event.target.closest('[data-drop-status]');
+  if (column && !column.contains(event.relatedTarget)) column.classList.remove('kanban-drop-target');
+});
+$('#kanban-board').addEventListener('drop', event => {
+  const column = kanbanDropColumn(event);
+  if (!column) { clearKanbanDrag(); return; }
+  event.preventDefault();
+  const id = draggedLeadId;
+  const status = column.dataset.dropStatus;
+  clearKanbanDrag();
+  moveKanbanLead(id, status);
+});
+document.addEventListener('dragend', clearKanbanDrag);
+document.querySelectorAll('[data-layout]').forEach(button => button.addEventListener('click', () => {
+  state.layout = button.dataset.layout;
+  clearKanbanDrag();
+  renderTable();
+}));
 for (const selector of ['#search', '#status-filter']) $(selector).addEventListener('input', () => { state.page = 1; renderTable(); });
 $('#clear-filters').addEventListener('click', () => { $('#search').value = ''; $('#status-filter').value = ''; state.page = 1; renderTable(); });
 $('#previous-page').addEventListener('click', () => { state.page--; renderTable(); });
@@ -307,7 +418,7 @@ document.addEventListener('click', (event) => {
   if (!target) return;
   if (target.hasAttribute('data-new')) openNew();
   if (target.hasAttribute('data-retry')) loadLeads();
-  if (target.hasAttribute('data-detail')) openDetails(target.dataset.detail);
+  if (target.hasAttribute('data-detail') && movingLeadId === null) openDetails(target.dataset.detail);
   if (target.hasAttribute('data-close') && !state.saving && !state.updating) target.closest('dialog').close();
 });
 document.querySelectorAll('dialog').forEach((dialog) => {

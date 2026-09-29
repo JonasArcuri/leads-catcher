@@ -82,6 +82,10 @@
             <p>Acompanhe cada contato. Encontre a próxima oportunidade.</p>
           </div><button id="refresh" class="button subtle">Atualizar</button>
         </div>
+        <div class="view-switch" role="group" aria-label="Visualização dos leads">
+          <button type="button" class="button subtle" data-layout="list" aria-pressed="true">Lista</button>
+          <button type="button" class="button subtle" data-layout="kanban" aria-pressed="false">Kanban</button>
+        </div>
         <div class="filters">
           <div class="search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true">
               <circle cx="10.5" cy="10.5" r="6.5" />
@@ -92,7 +96,7 @@
             <option value="">Todos os status</option>
           </select><button id="clear-filters" class="text-button" hidden>Limpar filtros</button>
         </div>
-        <div class="table-scroll">
+        <div id="leads-table" class="table-scroll">
           <table>
             <thead>
               <tr>
@@ -108,6 +112,7 @@
             <tbody id="lead-rows"></tbody>
           </table>
         </div>
+        <div id="kanban-board" class="kanban-board" role="region" aria-label="Leads por status" tabindex="0" hidden></div>
         <div id="table-state" class="table-state" role="status"></div>
         <footer class="table-footer"><span id="result-count" aria-live="polite">Aguardando conexão</span>
           <div class="pagination"><button id="previous-page" class="button subtle"
