@@ -220,3 +220,7 @@ Também foi Implementado um caso em que haja algum tipo de falha da chamada da A
 
 Após cadastrar um lead, os detalhes abrem com a sugestão pronta. Para leads existentes, clique em **Visualizar**. A sugestão pode ser editada, regenerada e copiada; não é enviada ao WhatsApp porém, há um botão para enviar diretamente. As edições ficam somente na memória da página e são perdidas ao recarregar. “Gerar novamente” restaura o texto original, substituindo as edições. Sem permissão de clipboard, o texto é selecionado para cópia manual.
 
+
+## Conclusões
+
+Foi um projeto bem interessante, por mais que eu já tenha feito algo parecido, eu usaria uma arquitetura diferente e um Backend mais robusto para larga escala. Utilização de um Front-end mais forte Como React, Tailwind, Material UI ou Shadcn/ui, Talvez Mocks para geração de Dados fictícios em um ambiente de testes.
