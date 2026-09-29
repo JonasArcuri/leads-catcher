@@ -1,10 +1,10 @@
 # CRI Leads
 
 ## Sobre o projeto
-Mini CRM da CRI Soluções Imobiliárias para acompanhar oportunidades imobiliárias. Interface em português, navy e dourado, com referência institucional em https://www.imobiliariacri.com.br/. Implementação independente, sem copiar HTML/CSS do site.
+Desafio proposto pela empresa CRI Soluções Imobiliárias para captação, processamento e entrada de leads em um Mini Sistema CRM.
 
 ## Problema
-Contatos recebidos por Site, WhatsApp e Indicação precisam de registro centralizado e acompanhamento, substituindo anotações manuais.
+Contatos recebidos por Site, WhatsApp e Indicação precisam de registro centralizado e acompanhamento e endereçamento, dados vindo da base de Dados Supabase. 
 
 ## Solução
 Aplicação web que consulta a tabela existente `public.leads`, cadastra contatos e atualiza seu status. Todas as informações do dashboard vêm do Supabase. Sem credenciais, a aplicação exibe um estado de configuração pendente, sem inventar registros ou indicadores.
@@ -46,32 +46,22 @@ README.md
 ```
 
 ## Banco de dados
-A tabela **já deve existir**. Este projeto não cria tabela nem altera schema.
+Não é necessário criar nenhum banco, pois o sistema já faz acesso a base de dados Supabase.
+
+
+Algumas indagações sobre a tabela leads, feita exclusivamente para os leads.
 
 | Coluna | Uso |
 | --- | --- |
 | `id` | Chave primária, gerada pelo banco |
 | `criado_em` | Timestamp, default `now()` |
 | `nome_lead` | VARCHAR, nome |
-| `fone_lead` | VARCHAR, telefone preservado como texto |
+| `fone_lead` | VARCHAR, tamanho(11) telefone preservado como texto |
 | `imovel_lead` | VARCHAR, interesse |
 | `ori_lead` | `Site`, `WhatsApp`, `Indicacao` |
 | `status_lead` | `Novo`, `Qualificado`, `Em contato`, `Convertido`, `Perdido` |
 
 O INSERT envia somente as cinco colunas de negócio. `id` e `criado_em` dependem dos defaults existentes. Datas são apresentadas em `pt-BR`, fuso `America/Sao_Paulo`. Se `criado_em` for timestamp sem fuso, confirme a convenção usada pelo banco; prefira respostas ISO com offset para evitar ambiguidades, sem alterar o schema nesta entrega.
-
-## Configuração Supabase
-No painel do seu projeto, copie a Project URL e uma chave **publishable** (`sb_publishable_...`) ou a chave legada pública **anon**. Não utilize `service_role`, `sb_secret_...` ou credenciais administrativas.
-
-Confirme que `public.leads` está exposta pela Data API, que as permissões SQL e as policies existentes permitem as três operações previstas. `UPDATE ... SELECT` e `INSERT ... SELECT` precisam também de acesso de leitura. O cliente confirma que uma linha foi retornada para não apresentar sucesso em atualizações silenciosamente bloqueadas.
-
-## Variáveis/configuração
-Copie `.env.example` para `.env`, na raiz:
-```dotenv
-VITE_SUPABASE_URL=https://seu-projeto.supabase.co
-VITE_SUPABASE_PUBLISHABLE_KEY=sb_publishable_sua_chave
-```
-As variáveis `VITE_` são públicas e incorporadas ao bundle. `.env` está ignorado pelo Git, mas isso não torna uma chave usada no navegador secreta. O código rejeita chaves secretas conhecidas e JWTs cujo papel não seja `anon`; essa verificação é preventiva, não substitui RLS. Reinicie o servidor ao modificar `.env`; na Vercel, faça novo build/deploy.
 
 ## Como executar
 Use Node.js 22.12+ ou 24 LTS e npm.
@@ -86,19 +76,6 @@ npm test
 npm run build
 npm run preview
 ```
-
-### Validação com a base real
-As credenciais não acompanham o projeto. Os testes automatizados verificam lógica local; não provam conectividade nem persistência no seu Supabase.
-
-1. **SELECT:** configure `.env`, inicie o app e clique em Atualizar. Compare a listagem/total com o Table Editor do Supabase. Com RLS, uma resposta vazia pode significar ausência de permissão, e não tabela vazia. Confira as policies.
-2. **INSERT:** clique em Novo Lead, preencha os campos com um contato de teste autorizado e salve. Verifique o toast, a linha no dashboard e a linha no Table Editor, com `id` e `criado_em` gerados pelo banco. Atualize a página para confirmar persistência.
-3. **UPDATE:** abra Visualizar, altere o status e salve. Confira o badge, os indicadores e `status_lead` no Table Editor. Atualize a página e confirme novamente.
-4. Busque pelo nome/telefone/imóvel/origem e combine com status. Teste filtro sem resultados, acentos e telefone com/sem pontuação.
-5. Teste campos em branco, telefone inválido/internacional, Escape, Tab, mobile, falha de conexão e nova tentativa. Durante envio, os controles ficam bloqueados para evitar duplo clique.
-6. Análises e indicadores usam toda a base visível, independentemente dos filtros da listagem. Perdidos entram no total e no denominador das taxas.
-
-Cadastros reais de teste permanecem no banco: a interface não oferece exclusão. Se a requisição de escrita perder a resposta por falha de rede, consulte a base antes de reenviar, pois a escrita pode ter sido concluída.
-
 ## Consultas SQL
 Abra `database/analytics.sql` no SQL Editor do Supabase e execute uma consulta por vez ou o arquivo completo. São apenas SELECTs: volume por origem, qualificação por origem, distribuição de status e conversão por origem. Nenhuma consulta altera dados.
 
@@ -106,8 +83,6 @@ Qualificados = `Qualificado`, `Em contato` ou `Convertido`. Conversão = `Conver
 
 ## Segurança
 **Este protótipo não possui autenticação.** Permissões públicas de SELECT/INSERT/UPDATE permitem que qualquer pessoa com acesso à API leia contatos e grave dados. Use somente uma base de demonstração controlada e dados apropriados para esse contexto. Produção requer autenticação, autorização e policies restritivas antes de receber contatos pessoais reais.
-
-As policies abaixo são documentação para o responsável pelo banco; **não são aplicadas automaticamente** e não recriam a tabela. Revise policies existentes para não duplicá-las. O exemplo pressupõe RLS habilitado; confirme em Table Editor → RLS antes de configurar:
 
 ```sql
 -- SOMENTE protótipo público deliberadamente autorizado.
@@ -137,14 +112,6 @@ Valores do banco são escapados antes da renderização HTML. O formulário vali
 - Falha de rede: confirme URL, conectividade e disponibilidade do projeto Supabase.
 - Cadastro rejeitado: confira restrições/tamanhos reais dos VARCHARs e defaults de `id`/`criado_em`.
 
-## Deploy Vercel
-1. Envie o repositório ao GitHub sem `.env` ou `node_modules`.
-2. Importe na Vercel e use o preset Vite, comando `npm run build`, saída `dist` (já declarados em `vercel.json`).
-3. Configure `VITE_SUPABASE_URL` e `VITE_SUPABASE_PUBLISHABLE_KEY` nos ambientes desejados.
-4. Publique e repita os testes de SELECT/INSERT/UPDATE. As rotas usam hash e não exigem rewrites.
-
-O projeto está preparado para deploy; esta implementação não cria projeto remoto nem publica automaticamente.
-
 ## Decisões técnicas
 - HTML/CSS/JS bastam para três visualizações e modais; evitam complexidade de framework.
 - Supabase oferece SDK e Data API para PostgreSQL, sem backend redundante.
@@ -157,16 +124,13 @@ O projeto está preparado para deploy; esta implementação não cria projeto re
 - `service_role` não aparece no frontend porque contorna RLS. Apenas credencial pública apropriada é aceita.
 - Fonte usa Inter quando disponível, com fallback local Segoe UI/Arial, sem depender de carregamento externo.
 
-## Etapa 4 — Agente de automação local
-Implementado em `js/message-agent.js`: função `generateFirstMessage({ nome_lead, imovel_lead })` que gera uma primeira mensagem personalizada com saudação, identificação da CRI, interesse informado e pergunta para iniciar o atendimento.
+## Etapa 4 — Agente de automação local e LLM em Cloud Gerenciada por GROQ
 
-Conforme o escopo desta etapa, é uma **simulação determinística por regras**, não uma IA real. Não usa API, chave, serviços externos nem altera o banco. O texto do interesse é citado como informação recebida; o gerador não consulta estoque ou inventa preços, disponibilidade e características.
+O Sistema utiliza uma LLM de baixo custo, proporcionando uma mensagem mais humanizada e atrativa para os leads, sua resposta é com base na descrição do item desejado do Lead.
 
-Após cadastrar um lead, os detalhes abrem com a sugestão pronta. Para leads existentes, clique em **Visualizar**. A sugestão pode ser editada, regenerada e copiada; não é enviada ao WhatsApp. As edições ficam somente na memória da página e são perdidas ao recarregar. “Gerar novamente” restaura o texto original, substituindo as edições. Sem permissão de clipboard, o texto é selecionado para cópia manual.
+Implementado em api/generate-message.js, modelo configurado openai/gpt-oss-120b.
 
-Para validar: cadastre um lead com nome e interesse, confira os dois na mensagem, edite e copie. Abra outro lead e confira a personalização. Execute `npm test` para verificar também os casos de dados ausentes e normalização de espaços. Nenhuma configuração adicional no `.env` é necessária.
+Também foi Implementado um caso em que haja algum tipo de falha da chamada da API do Agente, o sistema irá gerar uma mensagem padronizada da CRI, Sendo alocado em `js/message-agent.js`: função `generateFirstMessage({ nome_lead, imovel_lead })` que gera uma primeira mensagem personalizada com saudação, identificação da CRI, interesse informado e pergunta para iniciar o atendimento.
 
-## Melhorias futuras
-Substituir o gerador local por um LLM, quando solicitado. Fluxo previsto: interface → API Serverless Vercel → LLM → mensagem. Segredos permanecerão no servidor; não há chamada de IA ou chave de LLM nesta entrega.
+Após cadastrar um lead, os detalhes abrem com a sugestão pronta. Para leads existentes, clique em **Visualizar**. A sugestão pode ser editada, regenerada e copiada; não é enviada ao WhatsApp porém, há um botão para enviar diretamente. As edições ficam somente na memória da página e são perdidas ao recarregar. “Gerar novamente” restaura o texto original, substituindo as edições. Sem permissão de clipboard, o texto é selecionado para cópia manual.
 
-Também ficam para evolução: histórico de contatos, responsável pelo lead, login, perfis, funil/Kanban, agendamento de visitas, notas, integração WhatsApp, dashboard avançado e relatórios.

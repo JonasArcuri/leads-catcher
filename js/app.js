@@ -225,8 +225,11 @@ function renderMessageAgent(lead) {
       if (controller.signal.aborted || !section.isConnected) return;
       draft.value = message;
       messageDrafts.set(id, draft.value);
-    } catch (error) {
-      if (!controller.signal.aborted && section.isConnected) feedback.textContent = error.message || 'Erro de conexão com a IA. Tente novamente.';
+    } catch {
+      if (controller.signal.aborted || !section.isConnected) return;
+      draft.value = generateFirstMessage(lead);
+      messageDrafts.set(id, draft.value);
+      feedback.textContent = 'Não foi possível carregar a resposta da IA. Carregamos o texto padrão para você revisar e usar.';
     } finally {
       generateButton.disabled = false;
       generateButton.textContent = 'Gerar com IA';
