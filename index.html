@@ -1,0 +1,202 @@
+<!doctype html>
+<html lang="pt-BR">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="color-scheme" content="light dark">
+  <meta name="darkreader-lock">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta name="theme-color" content="#0D1B2A">
+  <meta name="description" content="Painel interno de oportunidades da CRI Soluções Imobiliárias.">
+  <title>CRI Leads | Gestão de Oportunidades</title>
+  <link rel="icon" type="image/svg+xml" href="/favicon.svg?v=2">
+  <script src="/theme.js?v=3"></script>
+  <link rel="stylesheet" href="/css/style.css">
+  <script type="module" src="/js/app.js"></script>
+</head>
+
+<body>
+  <a class="skip-link" href="#main">Ir para o conteúdo</a>
+  <aside class="sidebar">
+    <a class="brand" href="#dashboard" aria-label="CRI Leads, início">
+      <svg class="brand-mark" viewBox="0 0 166 78" aria-hidden="true" focusable="false">
+        <path
+          d="M91.5 1.02348C97.2627 -0.624341 105.846 -0.200416 111 2.02347C117.543 4.18494 121.786 7.4363 126 14.0235C130.079 20.3997 131.432 26.0188 131 32.5235C130.574 38.9475 129.794 43.2339 126.5 47.5235C123.206 51.813 120.126 55.2799 116 57.5235C115 58.0235 114.5 58.5235 113 59.5235L128.5 77.0235H102.5L86 60.5235L84 58.5235L91 47.3813L94.5 40.9908L96.75 41.5072L99 42.0235C99 42.0235 99.5 42.0235 100.5 42.0235C101 42.0235 102 42.0235 102 42.0235C103.5 42.0235 103.621 41.8165 104.5 41.5235C105.379 41.2304 106 41.0235 106.5 40.5235C109 38.0235 109 37.5235 110 35.5235C111 33.5235 110.897 32.5824 111 31.0235C111 29.2072 111.341 27.9009 109.5 25.0235C107.659 22.1461 107 22.0235 105.5 21.0235C103.798 20.4613 102.074 19.4925 98.5 20.0235C93.0504 21.582 89.1613 26.1219 87.6446 30.0235C84.5317 38.0317 78.1008 48.7852 69.5 61.5235C60.8992 74.2617 45.0794 80.8826 26.0076 75.298C14.0611 71.7997 6.36332 62.9933 2.68804 53.1423C-0.915259 43.4835 -0.867294 32.4135 2.65966 22.8261C6.2348 13.1081 15.3966 5.08979 27 1.52347C38.5095 -2.01352 56 0.523466 64 10.0235L53 27.5235C45 19.5235 36.2576 20.2154 32 21.5235C28 23.5235 25.144 25.4676 22.5 30.0235C20.6791 34.9737 20.5327 40.9203 22.3528 45.7991C24.1015 50.4858 27.3022 53.7963 31.9046 55.144C40.4143 57.6357 47.0648 54.5228 53.3716 47.3813C59.9677 39.9118 63 33.5235 67.5 25.0235C72.9414 14.7453 80.4011 4.19736 91.5 1.02348ZM166 77.0235H142V0.0234768L166 0.0234833V77.0235Z"
+          fill="currentColor" />
+      </svg>
+      <span class="brand-description">SOLUÇÕES<br>IMOBILIÁRIAS</span>
+    </a>
+    <div class="workspace-label">GESTÃO DE OPORTUNIDADES</div>
+    <nav aria-label="Navegação principal">
+      <a href="#dashboard" data-view="dashboard"><svg viewBox="0 0 24 24" aria-hidden="true">
+          <rect x="3" y="3" width="7" height="7" rx="1" />
+          <rect x="14" y="3" width="7" height="7" rx="1" />
+          <rect x="3" y="14" width="7" height="7" rx="1" />
+          <rect x="14" y="14" width="7" height="7" rx="1" />
+        </svg><span>Dashboard</span></a>
+      <a href="#leads" data-view="leads"><svg viewBox="0 0 24 24" aria-hidden="true">
+          <circle cx="9" cy="8" r="4" />
+          <path d="M2 21v-3a7 7 0 0 1 14 0v3M17 4a4 4 0 0 1 0 8m2 3a6 6 0 0 1 3 6" />
+        </svg><span>Leads</span></a>
+      <a href="#analises" data-view="analises"><svg viewBox="0 0 24 24" aria-hidden="true">
+          <path d="M4 3v18h17M9 16v-5m5 5V7m5 9V3" />
+        </svg><span>Análises</span></a>
+    </nav>
+    <div class="sidebar-bottom"><span class="small-caps">CRI LEADS</span>
+      <p>Boas conexões.<br>Grandes oportunidades.</p>
+    </div>
+  </aside>
+  <div class="shell">
+    <div class="topbar"><span>CRI <span class="divider">/</span> Relacionamento com clientes</span>
+      <div class="topbar-actions">
+        <button id="theme-toggle" class="button subtle theme-toggle" type="button" aria-label="Tema escuro"
+          aria-pressed="false">
+          <svg class="theme-moon" viewBox="0 0 24 24" aria-hidden="true">
+            <path d="M21 13a9 9 0 0 1-10-10 9 9 0 1 0 10 10Z" />
+          </svg>
+          <svg class="theme-sun" viewBox="0 0 24 24" aria-hidden="true">
+            <circle cx="12" cy="12" r="4" />
+            <path d="M12 2v2m0 16v2M2 12h2m16 0h2M5 5l1.5 1.5m11 11L19 19M5 19l1.5-1.5m11-11L19 5" />
+          </svg>
+          <span id="theme-label">Tema</span>
+        </button>
+        <span class="team"><span class="avatar">CR</span> Equipe CRI</span>
+      </div>
+    </div>
+    <main id="main">
+      <header class="page-header">
+        <div>
+          <p class="eyebrow">SEU PRÓXIMO NEGÓCIO COMEÇA AQUI</p>
+          <h1 id="page-title">Dashboard</h1>
+          <p id="page-subtitle">Visão geral dos leads e oportunidades da CRI.</p>
+        </div><button class="button primary" data-new><span aria-hidden="true">+</span> Novo Lead</button>
+      </header>
+      <div id="connection-notice" class="notice" hidden><strong>Conecte sua base de
+          oportunidades.</strong><span>Preencha a URL e a chave pública do Supabase no arquivo .env e reinicie a
+          aplicação. Nenhum dado de demonstração é utilizado.</span></div>
+      <section id="metrics" class="metrics" aria-label="Indicadores gerais"></section>
+      <section id="leads-section" class="panel">
+        <div class="section-heading">
+          <div>
+            <h2>Leads <span id="lead-count" class="count">—</span></h2>
+            <p>Acompanhe cada contato. Encontre a próxima oportunidade.</p>
+          </div><button id="refresh" class="button subtle">Atualizar</button>
+        </div>
+        <div class="filters">
+          <div class="search-wrap"><svg viewBox="0 0 24 24" aria-hidden="true">
+              <circle cx="10.5" cy="10.5" r="6.5" />
+              <path d="m16 16 5 5" />
+            </svg><label class="sr-only" for="search">Buscar lead</label><input id="search" type="search"
+              placeholder="Buscar por nome, telefone, imóvel ou origem..."></div><label class="sr-only"
+            for="status-filter">Filtrar por status</label><select id="status-filter">
+            <option value="">Todos os status</option>
+          </select><button id="clear-filters" class="text-button" hidden>Limpar filtros</button>
+        </div>
+        <div class="table-scroll">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Telefone</th>
+                <th>Origem</th>
+                <th>Imóvel de interesse</th>
+                <th>Status</th>
+                <th>Data</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="lead-rows"></tbody>
+          </table>
+        </div>
+        <div id="table-state" class="table-state" role="status"></div>
+        <footer class="table-footer"><span id="result-count" aria-live="polite">Aguardando conexão</span>
+          <div class="pagination"><button id="previous-page" class="button subtle"
+              aria-label="Página anterior">←</button><span id="page-number">—</span><button id="next-page"
+              class="button subtle" aria-label="Próxima página">→</button></div>
+        </footer>
+      </section>
+      <section id="analytics-section" class="analytics-grid" aria-label="Análises de leads" hidden>
+        <article class="panel analysis-panel">
+          <p class="eyebrow">AQUISIÇÃO</p>
+          <h2>Origem dos leads</h2>
+          <p class="muted">De onde vêm as suas oportunidades.</p>
+          <div id="origin-chart"></div>
+        </article>
+        <article class="panel analysis-panel">
+          <p class="eyebrow">RELACIONAMENTO</p>
+          <h2>Distribuição por status</h2>
+          <p class="muted">Um retrato da sua carteira de leads.</p>
+          <div id="status-chart"></div>
+        </article>
+        <article class="panel analysis-panel quality-panel">
+          <h2>Volume e qualidade por origem</h2>
+          <p class="muted">Qualificados incluem Qualificado, Em contato e Convertido. As taxas consideram todos os leads
+            de cada origem.</p>
+          <div class="table-scroll">
+            <table>
+              <thead>
+                <tr>
+                  <th>Origem</th>
+                  <th>Total</th>
+                  <th>Qualificados</th>
+                  <th>Qualificação</th>
+                  <th>Convertidos</th>
+                  <th>Conversão</th>
+                </tr>
+              </thead>
+              <tbody id="quality-rows"></tbody>
+            </table>
+          </div>
+        </article>
+      </section>
+      <footer class="page-footer"><span>CRI Soluções Imobiliárias</span><span>Relacionamentos que constroem o
+          futuro.</span></footer>
+    </main>
+  </div>
+  <dialog id="lead-dialog" aria-labelledby="form-title">
+    <form id="lead-form" novalidate>
+      <div class="modal-heading">
+        <div>
+          <p class="eyebrow">NOVA OPORTUNIDADE</p>
+          <h2 id="form-title">Novo lead</h2>
+        </div><button type="button" class="close-button" data-close aria-label="Fechar formulário">×</button>
+      </div>
+      <p class="muted">Cadastre uma nova oportunidade recebida pela CRI.</p>
+      <div class="form-grid">
+        <div class="field full"><label for="nome_lead">Nome do lead *</label><input id="nome_lead" name="nome_lead"
+            autocomplete="name" required maxlength="200" aria-describedby="error-nome_lead"><small id="error-nome_lead"
+            class="field-error"></small></div>
+        <div class="field"><label for="fone_lead">Telefone *</label><input id="fone_lead" name="fone_lead" type="tel"
+            autocomplete="tel" placeholder="(47) 99999-9999" required maxlength="30"
+            aria-describedby="error-fone_lead"><small id="error-fone_lead" class="field-error"></small></div>
+        <div class="field"><label for="ori_lead">Origem *</label><select id="ori_lead" name="ori_lead" required
+            aria-describedby="error-ori_lead">
+            <option value="">Selecione a origem</option>
+          </select><small id="error-ori_lead" class="field-error"></small></div>
+        <div class="field full"><label for="imovel_lead">Imóvel de interesse *</label><textarea id="imovel_lead"
+            name="imovel_lead" rows="3" required maxlength="3000"
+            placeholder="Ex: Apartamento com 3 suítes na Praia Brava até R$ 2 milhões."
+            aria-describedby="error-imovel_lead"></textarea><small id="error-imovel_lead" class="field-error"></small>
+        </div>
+        <div class="field full"><label for="status_lead">Status *</label><select id="status_lead" name="status_lead"
+            required aria-describedby="error-status_lead"></select><small id="error-status_lead"
+            class="field-error"></small></div>
+      </div>
+      <p id="form-error" class="field-error" role="alert"></p>
+      <div class="modal-footer"><button type="button" class="button subtle" data-close>Cancelar</button><button
+          id="submit-lead" class="button primary" type="submit">Cadastrar lead</button></div>
+    </form>
+  </dialog>
+  <dialog id="detail-dialog" aria-labelledby="detail-title">
+    <div class="modal-heading">
+      <div>
+        <p class="eyebrow">OPORTUNIDADE</p>
+        <h2 id="detail-title">Detalhes do lead</h2>
+      </div><button type="button" class="close-button" data-close aria-label="Fechar detalhes">×</button>
+    </div>
+    <div id="detail-content"></div>
+  </dialog>
+  <div id="toasts" class="toasts" aria-live="polite" aria-atomic="false"></div>
+</body>
+
+</html>
